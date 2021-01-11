@@ -1,0 +1,66 @@
+global:
+
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'docker-host-alpha'
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+  - "targets.rules"
+  - "host.rules"
+  - "containers.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape.
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+      
+  - job_name: 'mysqld'
+    static_configs:
+      - targets: ['172.16.50.168:9104']          
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['192.168.12.143:9913', '192.168.112.248:9913']
+      
+  - job_name: 'egp-nodes-intra-scraper'
+    file_sd_configs:
+      - files:
+        - /etc/prometheus/egp-nodes-intra.json
+    metric_relabel_configs:
+      - source_labels: [name]
+        regex: '(.*?\.(\d\......|\w....)).+'
+        target_label: name
+        replacement: ${1}
+  - job_name: 'egp-nodes-inter-scraper'
+    file_sd_configs:
+      - files:
+        - /etc/prometheus/egp-nodes-inter.json
+    metric_relabel_configs:
+      - source_labels: [name]
+        regex: '(.*?\.(\d\......|\w....)).+'
+        target_label: name
+        replacement: ${1}
+  - job_name: 'elasticstack-scraper'
+    file_sd_configs:
+      - files:
+        - /etc/prometheus/elk.json
+    metric_relabel_configs:
+      - source_labels: [name]
+        regex: '(.*?\.(\d\......|\w....)).+'
+        target_label: name
+        replacement: ${1}
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch1.openstacklocal:9108', 'elasticsearch2.openstacklocal:9108', 'elasticsearch3.openstacklocal:9108']
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '(.+)\..*'
+        target_label: instance
+        replacement: ${1}
+

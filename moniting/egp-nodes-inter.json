@@ -1,0 +1,38 @@
+[
+   {
+     "targets": [
+       "192.168.7.111:4000"
+     ],
+     "labels": {
+       "job": "mssql",
+       "instance": "mssql-node"
+     }
+   },
+   {
+     "targets": [
+       "192.168.7.111:9913"
+     ],
+     "labels": {
+       "job": "nginx",
+       "instance": "nginx-node"
+     }
+   },
+   {
+     "targets": [
+       "192.168.7.111:9104"
+     ],
+     "labels": {
+       "job": "mysql",
+       "instance": "mysql-node"
+     }
+   },
+   {
+     "targets": [
+       "192.168.6.202:9182"
+     ],
+     "labels": {
+       "job": "windows",
+       "instance": "windows-node"
+     }
+   }
+]
